@@ -149,5 +149,5 @@ if __name__ == "__main__":
     num_particles = 20
     maxiter = 100
     pso = PSO(objective_function, bounds, num_particles, maxiter)
-    #pso.run_result()
-    pso.run_animation()
+    pso.run_result()
+    # pso.run_animation()
