@@ -1,10 +1,6 @@
 import random
 import numpy as np
 from math import *
-from matplotlib import pyplot as plt
-from matplotlib import animation
-from mpl_toolkits.mplot3d import Axes3D
-from IPython.display import HTML
 import matplotlib
 import sys
 import time
@@ -71,55 +67,6 @@ class PSO:
         self.swarm = [] # 초기 particles
         for i in range(num_particles):
             self.swarm.append(Particle(bounds, self.max_iter))
-            
-    def run_animation(self):
-        history = [] 
-        fig = plt.figure(figsize=(7,7))
-        ax = fig.add_subplot(111, projection='3d')
-        x = np.linspace(self.bounds[0][0], self.bounds[0][1], 100)
-        y = np.linspace(self.bounds[1][0], self.bounds[1][1], 100)
-        X, Y = np.meshgrid(x, y)
-        Z = objective_function([X,Y])
-        ax.plot_wireframe(X, Y, Z, color='r', linewidth=0.2)
-        ax.set_xlim(self.bounds[0][0], self.bounds[0][1])
-        ax.set_ylim(self.bounds[1][0], self.bounds[1][1])
-        ax.set_zlim(0, 12)
-        scatter = ax.scatter([], [], [], s=50, c='b', marker='o')
-
-        def animate(i):
-            history = []
-            particle_history = []
-            # 각 particle의 fitness 평가하기
-            for j in range(self.num_particles):
-                self.swarm[j].evaluate_fitness(self.fitness_func)
-                # global_best_position, global_best_fitness 업데이트
-                if self.swarm[j].fitness < self.global_best_fitness or self.global_best_fitness == -1:
-                    self.global_best_position = list(self.swarm[j].position)
-                    self.global_best_fitness = float(self.swarm[j].fitness)
-                particle_history.append([self.swarm[j].position[0], self.swarm[j].position[1], self.swarm[j].fitness])
-            # 각 particle의 position과 velocity 업데이트
-            for j in range(self.num_particles):
-                self.swarm[j].update_velocity(self.global_best_position)
-                self.swarm[j].update_position(self.bounds)
-            history.extend(particle_history)
-            xs = [particle[0] for particle in history]
-            ys = [particle[1] for particle in history]
-            zs = [particle[2] for particle in history]
-            scatter._offsets3d = (xs,ys,zs)
-            ax.set_title("3D Plot of Objective Function (Iteration %d)" % i)
-            if i == self.max_iter-1:
-                ax.scatter(self.global_best_position[0], self.global_best_position[1], self.global_best_fitness, c='r', marker='*', s=100)
-                scatter.set_alpha(0)
-            fig.canvas.draw()
-            return scatter,
-
-        anim = animation.FuncAnimation(fig, animate, frames=self.max_iter, interval=50, blit=False, repeat=False)
-        #anim.save('animation.gif', writer='ffmpeg', fps=10) # gif저장
-        plt.show() 
-        print('Best position:', self.global_best_position)
-        print('Best fitness:', self.global_best_fitness)      
-
-        return self.global_best_position, self.global_best_fitness, history, HTML(anim.to_jshtml())
     
     def run_result(self):
         start_time = time.time()
@@ -147,7 +94,6 @@ def objective_function(x):
     y = np.array(x)
     z = -20 * np.exp(-0.2 * np.sqrt(0.5 * (x[0]**2 + y[1]**2))) - np.exp(0.5 * (np.cos(2 * np.pi * x[0]) + np.cos(2 * np.pi * y[1]))) + np.exp(1) + 20
     return z
-
 
 if __name__ == "__main__":
     bounds = [(-4,4), (-4,4)]  # 제약조건
