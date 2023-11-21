@@ -2,6 +2,7 @@ import random
 import numpy as np
 from math import *
 from matplotlib import pyplot as plt
+plt.rc('font', family='Malgun Gothic')
 from matplotlib import animation
 from mpl_toolkits.mplot3d import Axes3D
 from IPython.display import HTML
@@ -106,15 +107,17 @@ class PSO:
             ys = [particle[1] for particle in history]
             zs = [particle[2] for particle in history]
             scatter._offsets3d = (xs,ys,zs)
-            ax.set_title("3D Plot of Objective Function (Iteration %d)" % i)
+            #ax.set_title("PSO 해 변화 과정 (Iteration %d)" % i, fontsize=20)
             if i == self.max_iter-1:
                 ax.scatter(self.global_best_position[0], self.global_best_position[1], self.global_best_fitness, c='r', marker='*', s=100)
                 scatter.set_alpha(0)
             fig.canvas.draw()
             return scatter,
-
+        
         anim = animation.FuncAnimation(fig, animate, frames=self.max_iter, interval=50, blit=False, repeat=False)
-        #anim.save('animation.gif', writer='ffmpeg', fps=10) # gif저장
+        
+        plt.rcParams['axes.unicode_minus'] = False
+        anim.save('PSO.gif', writer='pillow', fps=10) # gif저장
         plt.show() 
         print('Best position:', self.global_best_position)
         print('Best fitness:', self.global_best_fitness)      
@@ -154,5 +157,5 @@ if __name__ == "__main__":
     num_particles = 50
     maxiter = 100
     pso = PSO(objective_function, bounds, num_particles, maxiter)
-    pso.run_result()
-    # pso.run_animation()
+    # pso.run_result()
+    pso.run_animation()
