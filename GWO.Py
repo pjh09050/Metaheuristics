@@ -1,4 +1,5 @@
 import numpy as np
+import time
 
 class GWO:
     def __init__(self, obj_func, bounds, dim, num_particles, max_iter):
@@ -9,6 +10,7 @@ class GWO:
         self.max_iter = max_iter
 
     def optimize(self):
+        start_time = time.time()
         alpha_pos = np.random.uniform(self.bounds[0][0], self.bounds[0][1], self.dim)
         beta_pos = np.random.uniform(self.bounds[0][0], self.bounds[0][1], self.dim)
         delta_pos = np.random.uniform(self.bounds[0][0], self.bounds[0][1], self.dim)
@@ -24,8 +26,11 @@ class GWO:
             for i in range(self.num_particles):
                 fitness = self.obj_func(positions[i, :])
                 if fitness < self.obj_func(alpha_pos):
+                    delta_pos = beta_pos
+                    beta_pos = alpha_pos
                     alpha_pos = positions[i, :]
                 if (fitness > self.obj_func(alpha_pos)) and (fitness < self.obj_func(beta_pos)):
+                    delta_pos = beta_pos
                     beta_pos = positions[i, :]
                 if (fitness > self.obj_func(alpha_pos)) and (fitness > self.obj_func(beta_pos)) and (fitness < self.obj_func(delta_pos)):
                     delta_pos = positions[i, :]
@@ -61,7 +66,10 @@ class GWO:
 
             if t % 10 == 0:
                 print(f'Iteration {t}, Best Position: {best_pos}, Fitness: {best_score:.6f}')
-                
+
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        print('Elapsed Time:', elapsed_time)        
         print('Best position:', best_pos)
         print('Best fitness:', best_score)
 
@@ -76,7 +84,7 @@ def objective_function(x):
 if __name__ == "__main__":
     bounds = [(-4,4), (-4,4)]
     dim = len(bounds)
-    num_particles = 10
+    num_particles = 50
     max_iter = 100
     gwo = GWO(objective_function, bounds, dim, num_particles, max_iter)
     gwo.optimize()

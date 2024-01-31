@@ -138,6 +138,10 @@ class PSO:
             for j in range(self.num_particles):
                 self.swarm[j].update_velocity(self.global_best_position)
                 self.swarm[j].update_position(self.bounds)
+
+            if i % 10 == 0:
+                print(f'Iteration {i}, Best Position: {self.global_best_position}, Fitness: {self.global_best_fitness:.6f}')
+
         end_time = time.time()
         elapsed_time = end_time - start_time
         print('Elapsed Time:', elapsed_time)
@@ -157,5 +161,5 @@ if __name__ == "__main__":
     num_particles = 50
     maxiter = 100
     pso = PSO(objective_function, bounds, num_particles, maxiter)
-    # pso.run_result()
-    pso.run_animation()
+    pso.run_result()
+    # pso.run_animation()
